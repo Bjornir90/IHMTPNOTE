@@ -43,6 +43,7 @@ public class Controller {
 	public void initialize(){
 		deleteButton.setDisable(true);
 		cloneButton.setDisable(true);
+		//Get which radio button is currently selected
 		action.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
 			public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
 
@@ -71,9 +72,10 @@ public class Controller {
 				System.out.println("Moving currentShape = " + currentShape);
 				currentShape.relocate(event.getSceneX() - drawingPane.getLayoutX(), event.getSceneY() - drawingPane.getLayoutY());
 				currentShape = null;
+				return;//Do not attempt to spawn a shape
 			}
 			if(justChanged) justChanged = false;//To ignore the click that selected the shape
-			spawnShape(event.getSceneX(), event.getSceneY());
+			spawnShape(event.getSceneX(), event.getSceneY(), currentlySelected.getId());
 		});
 
 		colorPicker.setOnAction(event -> {
@@ -88,7 +90,15 @@ public class Controller {
 
 		cloneButton.setOnMouseClicked(event -> {
 			if(currentShape != null){
-
+				String toSpawn = new String();
+				if(currentShape.getClass() == Rectangle.class){
+					toSpawn = rectangleButton.getId();
+				} else if(currentShape.getClass() == Ellipse.class){
+					toSpawn = ellipsisButton.getId();
+				} else if(currentShape.getClass() == Line.class){
+					toSpawn = lineButton.getId();
+				}
+				spawnShape(currentShape.getLayoutX()+5+drawingPane.getLayoutX(), currentShape.getLayoutY()+5+drawingPane.getLayoutY(), toSpawn);
 			}
 		});
 	}
@@ -105,8 +115,14 @@ public class Controller {
 		this.currentShape = currentShape;
 	}
 
-	private void spawnShape(double x, double y){
-		switch(currentlySelected.getId()){
+	/**
+	 * Spawn a shape depending on currently selected radio button, and on position of mouse click. Is called when a click is detected
+	 * on the canvas.
+	 * @param x x coordinate of mouse click
+	 * @param y y coordinate of mouse click
+	 */
+	private void spawnShape(double x, double y, String toSpawn){
+		switch(toSpawn){
 			case "lineButton":
 				Line line = new Line();
 				line.setStartX(x - line.getLayoutBounds().getMinX() - drawingPane.getLayoutX());
@@ -141,6 +157,11 @@ public class Controller {
 		}
 	}
 
+
+	/**
+	 * Select the shape that has been clicked (is called when a click is made on a shape).
+	 * @param event the mouse click event
+	 */
 	public void selectShape(MouseEvent event){
 		Shape shape = (Shape) event.getSource();
 		shape.setFill(currentPaint);
