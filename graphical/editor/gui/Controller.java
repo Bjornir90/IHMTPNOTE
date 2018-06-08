@@ -120,8 +120,8 @@ public class Controller {
 			case "rectangleButton":
 				System.out.println("Spawning rectangle");
 				Rectangle rectangle = new Rectangle();
-				rectangle.setHeight(25);
-				rectangle.setWidth(35);
+				rectangle.setHeight(35);
+				rectangle.setWidth(60);
 				rectangle.setLayoutX(x - rectangle.getLayoutBounds().getMinX() - drawingPane.getLayoutX());
 				rectangle.setLayoutY(y - rectangle.getLayoutBounds().getMinY() - drawingPane.getLayoutY());
 				rectangle.setFill(currentPaint);
